@@ -40,7 +40,7 @@ def create_normaluser_profile(sender, instance, created, **kwargs):
     
 class NormalUserProfile(models.Model):
     user = models.OneToOneField(user, on_delete=models.CASCADE)
-    name = models.CharField(True)
+    name = models.CharField(null = True, blank=True, max_length=64)
     age = models.IntegerField(null = True, blank=True)
 
 
