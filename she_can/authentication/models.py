@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 # Create your models here.
 class people(AbstractUser):
@@ -28,6 +30,13 @@ class user(people):
         
     def welcome(self):
         return "Welcome to SHeCan Foundation"
+    
+@receiver(post_save, sender=user)
+def create_normaluser_profile(sender, instance, created, **kwargs):
+    if created and instance.role == "USER":
+        NormalUserProfile.objects.create(user=instance)
+        
+    
     
 class NormalUserProfile(models.Model):
     user = models.OneToOneField(user, on_delete=models.CASCADE)
