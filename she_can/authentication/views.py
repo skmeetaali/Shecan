@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import NormalUserProfile
-from .models import user
+from .models import NormalUser
 from django.http import HttpResponse
 from traceback import print_exc
 

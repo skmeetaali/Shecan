@@ -16,22 +16,22 @@ class people(AbstractUser):
         if not self.pk :
             self.role = self.base_role
             return super().save(*args, **kwargs)
-        
-class NormalUser(BaseUserManager):
+    
+class NormalUserManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
         all_user =  super().get_queryset(*args, **kwargs)
         return all_user.filter(role=people.Role.USER)
 
-class user(people):
+class NormalUser(people):
     base_role = people.Role.USER
-    user = NormalUser()
+    user = NormalUserManager()
     class Meta:
         proxy = True
         
     def welcome(self):
         return "Welcome to SHeCan Foundation"
     
-@receiver(post_save, sender=user)
+@receiver(post_save, sender=NormalUser)
 def create_normaluser_profile(sender, instance, created, **kwargs):
     if created and instance.role == "USER":
         NormalUserProfile.objects.create(user=instance)
@@ -39,9 +39,7 @@ def create_normaluser_profile(sender, instance, created, **kwargs):
     
     
 class NormalUserProfile(models.Model):
-    user = models.OneToOneField(user, on_delete=models.CASCADE)
+    user = models.OneToOneField(NormalUser, on_delete=models.CASCADE)
     name = models.CharField(null = True, blank=True, max_length=64)
     age = models.IntegerField(null = True, blank=True)
 
-
-    
